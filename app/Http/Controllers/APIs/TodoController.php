@@ -49,8 +49,11 @@ class TodoController extends BaseController
 
     public function delete(string|int $id): JsonResponse
     {
+        $todo = Todo::find($id);
 
-        $todo = Todo::findOrFail($id);
+        if(! $todo) {
+            return $this->error('Todo not found');
+        }
 
         $todo->delete();
 
