@@ -18,16 +18,12 @@ class BaseController extends Controller
         return response()->json($response, 200);
     }
 
-    public function error(mixed $error = null, array $message = []): JsonResponse
+    public function error(mixed $message = null): JsonResponse
     {
         $response = [
             'success' => false,
-            'message' => $error,
+            'message' => $message,
         ];
-
-        if (! empty($message)) {
-            $response['data'] = $message;
-        }
 
         return response()->json($response, 400);
     }
