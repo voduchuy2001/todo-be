@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\APIs;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\TodoRequest;
 use App\Models\Todo;
 use Illuminate\Http\JsonResponse;
 
-class TodoController extends BaseController
+class TodoController extends Controller
 {
     protected int $itemPerPage = 10;
 
@@ -14,7 +15,10 @@ class TodoController extends BaseController
     {
         $todos = Todo::orderByDesc('created_at', 'desc')->paginate($this->itemPerPage);
 
-        return $this->success($todos, __('Todos list'));
+        return response()->json([
+            'data' => $todos->toArray(),
+            'msg' => __('Todos list'),
+        ]);
     }
 
     public function store(TodoRequest $request): JsonResponse
@@ -26,7 +30,10 @@ class TodoController extends BaseController
             'content' => $data['content'],
         ]);
 
-        return $this->success($todo, __('Create success'));
+        return response()->json([
+            'data' => $todo,
+            'msg' => __('Create success'),
+        ]);
     }
 
     public function update(TodoRequest $request, string|int $id): JsonResponse
@@ -36,7 +43,9 @@ class TodoController extends BaseController
         $todo = Todo::find($id);
 
         if(! $todo) {
-            return $this->error('Todo not found');
+            return response()->json([
+                'msg' => __('Todo not found'),
+            ]);
         }
 
         $todo->update([
@@ -44,7 +53,10 @@ class TodoController extends BaseController
             'content' => $data['content'],
         ]);
 
-        return $this->success($todo, __('Update success'));
+        return response()->json([
+            'data' => $todo,
+            'msg' => __('Update success')
+        ]);
     }
 
     public function delete(string|int $id): JsonResponse
@@ -52,11 +64,15 @@ class TodoController extends BaseController
         $todo = Todo::find($id);
 
         if(! $todo) {
-            return $this->error('Todo not found');
+            return response()->json([
+                'msg' => __('Todo not found'),
+            ]);
         }
 
         $todo->delete();
 
-        return $this->success($todo->name, __('Delete success'));
+        return response()->json([
+            'msg' => __('Delete success'),
+        ]);
     }
 }
