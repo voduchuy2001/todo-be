@@ -13,10 +13,11 @@ class TodoController extends Controller
 
     public function index(): JsonResponse
     {
-        $todos = Todo::orderByDesc('created_at', 'desc')->paginate($this->itemPerPage);
+        $todos = Todo::orderByDesc('created_at', 'desc')
+            ->paginate($this->itemPerPage);
 
         return response()->json([
-            'data' => $todos->toArray(),
+            'data' => $todos,
             'msg' => __('Todos list'),
         ]);
     }

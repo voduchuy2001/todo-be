@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\APIs;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\AuthRequest;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 
@@ -14,20 +15,20 @@ class AuthController extends Controller
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
-    public function login(): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
-        $credentials = request(['email', 'password']);
+        $credentials = $request->validated();
 
         if (! $token = auth()->attempt($credentials)) {
             return response()->json([
                 'msg' => 'Unauthorized',
-            ]);
+            ], 400);
         }
 
         return $this->respondWithToken($token);
     }
 
-    public function register(AuthRequest $request): JsonResponse
+    public function register(RegisterRequest $request): JsonResponse
     {
         $data = $request->validated();
 
