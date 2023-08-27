@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\TodoRequest;
 use App\Models\Todo;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class TodoController extends Controller
 {
@@ -16,8 +17,8 @@ class TodoController extends Controller
         $query = request()->query('query');
 
         $todos = Todo::orderByDesc('created_at', 'desc')
+            ->where('user_id', Auth::id())
             ->where('name', 'like', '%'. $query .'%')
-            ->orWhere('content', 'like', '%'. $query .'%')
             ->paginate($this->itemPerPage);
 
         return response()->json([
@@ -33,6 +34,7 @@ class TodoController extends Controller
         $todo = Todo::create([
             'name' => $data['name'],
             'content' => $data['content'],
+            'user_id' => Auth::id(),
         ]);
 
         return response()->json([
