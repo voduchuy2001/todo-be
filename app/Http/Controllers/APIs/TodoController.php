@@ -13,7 +13,11 @@ class TodoController extends Controller
 
     public function index(): JsonResponse
     {
+        $query = request()->query('query');
+
         $todos = Todo::orderByDesc('created_at', 'desc')
+            ->where('name', 'like', '%'. $query .'%')
+            ->orWhere('content', 'like', '%'. $query .'%')
             ->paginate($this->itemPerPage);
 
         return response()->json([
